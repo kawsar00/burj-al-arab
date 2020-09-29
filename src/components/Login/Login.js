@@ -22,14 +22,26 @@ const Login = () => {
         var provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().signInWithPopup(provider).then(function(result) {
             const {displayName, email} = result.user;
-            const signedInUser = {Name: displayName, email}
+            const signedInUser = {name: displayName, email}
             setLoggedInUser(signedInUser)
-            history.replace(from);
+            storeAuthToken()
+            
           })
           .catch(function(error) {
             var errorCode = error.code;
             var errorMessage = error.message;
             console.log(errorCode, errorMessage)
+          });
+    }
+
+    //jwt token function
+    const storeAuthToken = () => {
+        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+        //    console.log(idToken);
+        sessionStorage.setItem('token', idToken)
+        history.replace(from);
+          }).catch(function(error) {
+            // Handle error
           });
     }
     return (
